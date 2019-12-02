@@ -13,8 +13,8 @@ library(gridExtra)
 get_mat_rep <- function(x) {
   stopifnot(is.vector(x))
   rmat <- outer(x, x, FUN = `<`) * 1
-  rmat[outer(x, x, FUN = `==`)] <- 1/2
-  rmat[outer(x, x, FUN = `>`)] <- 0
+  rmat[outer(x, x, FUN = `==`)] <- 0
+  rmat[outer(x, x, FUN = `>`)] <- -1
   return(rmat)
 }
 
@@ -29,10 +29,10 @@ get_tens_rep <- function(x) {
 
 set.seed(1)
 nind <- 100
-rankmat1 <- apply(X = rmm(n = nind, sigma0 = 1:10, theta = 0.4),
+rankmat1 <- apply(X = rmm(n = nind, sigma0 = 1:10, theta = 0.3),
                   MARGIN = 1,
                   FUN = order)
-rankmat2 <- apply(X = rmm(n = nind, sigma0 = c(10:1), theta = 0.4),
+rankmat2 <- apply(X = rmm(n = nind, sigma0 = c(10:1), theta = 0.3),
                   MARGIN = 1,
                   FUN = order)
 rankmat <- cbind(rankmat1, rankmat2)
@@ -62,7 +62,6 @@ data.frame(sv1 = svout$u[, 1], sv2 = svout$u[, 2], Group = group_vec) %>%
   ggtitle("(B)") ->
   pl2
 
-setEPS()
-postscript(file = "combined.eps", family = "Times", height = 2.5, width = 6)
+pdf(file = "combined.pdf", family = "Times", height = 2.5, width = 6)
 gridExtra::grid.arrange(pl1, pl2, layout_matrix = matrix(c(1, 2), nrow = 1), widths = c(2.5, 3.5))
 dev.off()
